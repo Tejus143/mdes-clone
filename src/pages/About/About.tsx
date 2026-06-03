@@ -1,4 +1,4 @@
-import { Alert, Button, Card, CardContent, CardMedia, Stack, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardActions, CardContent, CardMedia, Stack, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Loader from '../../components/common/Loader/Loader';
@@ -12,6 +12,12 @@ const guidingPrinciples = [
   'Every Child / Student needs to be respected, cared for and enabled to be a great person / leader.',
   'Well-to-do and rich to support the poor.',
 ];
+
+const formatDate = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+};
 
 const About = () => {
   const [latestNews, setLatestNews] = useState<NewsItem[]>([]);
@@ -57,7 +63,8 @@ const About = () => {
             Focus
           </Typography>
           <Typography>
-            Service to all, irrespective of caste, creed or race with a special em.phasis on rural areas and most underprivileged of society.
+            Service to all, irrespective of caste, creed or race with a special emphasis on rural areas and most
+            underprivileged of society.
           </Typography>
 
           <Typography variant="h5" sx={{ mt: 2, mb: 1 }}>
@@ -89,24 +96,48 @@ const About = () => {
       {error ? <Alert severity="error">{error}</Alert> : null}
 
       {!loading && !error ? (
-        <Stack spacing={2}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+            },
+            gap: 2.5,
+          }}
+        >
           {latestNews.map((item) => (
-            <Card key={item.id}>
+            <Card key={item.id} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
               {item.imageUrl ? (
-                <CardMedia component="img" image={item.imageUrl} height="210" alt={item.title} />
+                <CardMedia
+                  component="img"
+                  image={item.imageUrl}
+                  alt={item.title}
+                  sx={{
+                    width: '100%',
+                    height: 180,
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
               ) : null}
-              <CardContent>
-                <Typography variant="h6" sx={{ mb: 0.6 }}>
+              <CardContent sx={{ flex: 1 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                  {formatDate(item.date)}
+                </Typography>
+                <Typography variant="h6" sx={{ mb: 0.6, fontSize: '1rem' }}>
                   {item.title}
                 </Typography>
-                <Typography sx={{ mb: 1.2 }}>{item.excerpt}</Typography>
-                <Button component={RouterLink} to={`/news/${item.id}`} variant="contained">
+                <Typography variant="body2">{item.excerpt}</Typography>
+              </CardContent>
+              <CardActions>
+                <Button component={RouterLink} to={`/news/${item.id}`} variant="contained" size="small">
                   Read More
                 </Button>
-              </CardContent>
+              </CardActions>
             </Card>
           ))}
-        </Stack>
+        </Box>
       ) : null}
 
       <Card>
