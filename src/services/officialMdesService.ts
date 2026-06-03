@@ -1,6 +1,7 @@
 import type { CouncilMember } from '../types/CouncilMember';
 import type { Career } from '../types/Career';
 import type { Institution } from '../types/Institution';
+import type { NewsItem } from '../types/NewsItem';
 import { toTitleCase } from '../utils/formatters';
 
 const OFFICIAL_SITE_URL = 'https://mdes.in';
@@ -8,7 +9,10 @@ const OFFICIAL_API_BASE = `${OFFICIAL_SITE_URL}/wp-json/wp/v2`;
 const REQUEST_TIMEOUT_MS = 4500;
 const DEFAULT_OFFICIAL_BANNER_URL = `${OFFICIAL_SITE_URL}/wp-content/uploads/2022/12/MDS-banner-1.jpg`;
 const THEME_IMAGE_URLS = {
+  president: `${OFFICIAL_SITE_URL}/wp-content/themes/MDES/images/President.jpg`,
+  vicePresident: `${OFFICIAL_SITE_URL}/wp-content/uploads/2022/12/Vice_President.jpg`,
   secretary: `${OFFICIAL_SITE_URL}/wp-content/themes/MDES/images/Secretary.jpg`,
+  treasurer: `${OFFICIAL_SITE_URL}/wp-content/themes/MDES/images/treasurer.jpg`,
 } as const;
 
 const SITEMAP_URLS = {
@@ -60,6 +64,23 @@ type WpCareerPost = {
   };
 };
 
+type WpLatestNewsPost = {
+  id: number;
+  slug: string;
+  link: string;
+  date: string;
+  title: {
+    rendered: string;
+  };
+  excerpt: {
+    rendered: string;
+  };
+  content: {
+    rendered: string;
+  };
+  featured_media: number;
+};
+
 const districtBySlug: Record<string, string> = {
   mysuru: 'Mysuru',
   mandya: 'Mandya',
@@ -109,6 +130,15 @@ const fetchSitemapUrls = async (url: string): Promise<string[]> => {
 };
 
 const stripHtml = (value: string) => value.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').trim();
+
+const councilPhotoFallbackFromText = (value: string) => {
+  const lowered = value.toLowerCase();
+  if (lowered.includes('president') || lowered.includes('bernard')) return THEME_IMAGE_URLS.president;
+  if (lowered.includes('vice') || lowered.includes('mendonca')) return THEME_IMAGE_URLS.vicePresident;
+  if (lowered.includes('secretary') || lowered.includes('saldanha')) return THEME_IMAGE_URLS.secretary;
+  if (lowered.includes('treasurer') || lowered.includes('naveen')) return THEME_IMAGE_URLS.treasurer;
+  return undefined;
+};
 
 const slugFromUrl = (value: string) => {
   try {
@@ -186,7 +216,7 @@ const toCouncilMember = (
 
 const toCouncilMemberFromAttachment = (media: WpMedia): CouncilMember => {
   const title = stripHtml(media.title?.rendered ?? '') || 'MDES Council Member';
-  const fallbackPhotoUrl = title.toLowerCase().includes('secretary') ? THEME_IMAGE_URLS.secretary : undefined;
+  const fallbackPhotoUrl = councilPhotoFallbackFromText(title);
 
   return {
     id: `official-council-media-${media.id}`,
@@ -200,9 +230,7 @@ const toCouncilMemberFromAttachment = (media: WpMedia): CouncilMember => {
 
 const toCouncilMemberFromSitemapUrl = (url: string, index: number): CouncilMember => {
   const slug = slugFromUrl(url);
-  const fallbackPhotoUrl = slug.toLowerCase().includes('secretary')
-    ? THEME_IMAGE_URLS.secretary
-    : undefined;
+  const fallbackPhotoUrl = councilPhotoFallbackFromText(slug);
 
   return {
     id: `official-sitemap-council-${slug || index}`,
@@ -237,6 +265,39 @@ const toCareerFromSitemapUrl = (url: string, index: number): Career => {
     type: 'Full-Time',
     description: 'Refer official MDES careers page for full role details and eligibility.',
     applyUrl: url,
+  };
+};
+
+const toNewsItem = (post: WpLatestNewsPost, mediaById: Map<number, WpMedia>): NewsItem => {
+  const title = stripHtml(post.title.rendered) || readableFromSlug(post.slug);
+  const excerpt = stripHtml(post.excerpt.rendered) || 'Read more for details.';
+  const content = stripHtml(post.content.rendered) || excerpt;
+  const imageUrl = mediaById.get(post.featured_media)?.source_url;
+
+  return {
+    id: `official-news-${post.id}`,
+    slug: post.slug,
+    title,
+    excerpt,
+    content,
+    date: post.date,
+    imageUrl,
+    sourceUrl: post.link,
+  };
+};
+
+const toNewsItemFromSitemapUrl = (url: string, index: number): NewsItem => {
+  const slug = slugFromUrl(url);
+  const title = readableFromSlug(slug);
+
+  return {
+    id: `official-sitemap-news-${slug || index}`,
+    slug: slug || `news-${index}`,
+    title,
+    excerpt: 'Read more for details.',
+    content: 'Read more for details.',
+    date: new Date().toISOString(),
+    sourceUrl: url,
   };
 };
 
@@ -304,6 +365,20 @@ export const officialMdesService = {
 
     const fromApi = posts.map(toCareer);
     const fromSitemap = sitemapUrls.map((url, index) => toCareerFromSitemapUrl(url, index));
+
+    return mergeById(fromApi, fromSitemap);
+  },
+
+  async getLatestNews(): Promise<NewsItem[]> {
+    const [posts, media, sitemapUrls] = await Promise.all([
+      fetchJson<WpLatestNewsPost[]>(`${OFFICIAL_API_BASE}/latest_news?per_page=100`),
+      fetchJson<WpMedia[]>(`${OFFICIAL_API_BASE}/media?per_page=100`),
+      fetchSitemapUrls(SITEMAP_URLS.latestNews),
+    ]);
+
+    const mediaById = new Map<number, WpMedia>(media.map((item) => [item.id, item]));
+    const fromApi = posts.map((post) => toNewsItem(post, mediaById));
+    const fromSitemap = sitemapUrls.map((url, index) => toNewsItemFromSitemapUrl(url, index));
 
     return mergeById(fromApi, fromSitemap);
   },

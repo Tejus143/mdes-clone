@@ -9,6 +9,7 @@ import { contactService } from '../../services/contactService';
 import { institutionService } from '../../services/institutionService';
 import type { Contact } from '../../types/Contact';
 import type { Institution } from '../../types/Institution';
+import { MDES_SITE_INFO } from '../../utils/constants';
 
 const ContactUs = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -60,6 +61,10 @@ const ContactUs = () => {
   return (
     <Stack spacing={2.5}>
       <Typography variant="h4">Contact Directory</Typography>
+      <Typography color="text.secondary">Quick Contact: {MDES_SITE_INFO.quickContactAddress}</Typography>
+      <Typography color="text.secondary">
+        {MDES_SITE_INFO.phone} | {MDES_SITE_INFO.email} | {MDES_SITE_INFO.location}
+      </Typography>
       <SearchBar
         value={search}
         onChange={setSearch}

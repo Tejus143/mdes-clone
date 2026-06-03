@@ -19,7 +19,7 @@ const BreadcrumbsNav = () => {
       sx={{ mb: 2 }}
     >
       <Link component={RouterLink} underline="hover" color="inherit" to="/">
-        Dashboard
+        Home
       </Link>
       {segments.map((segment, index) => {
         const path = `/${segments.slice(0, index + 1).join('/')}`;
