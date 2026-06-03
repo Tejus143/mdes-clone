@@ -1,25 +1,29 @@
+import CloseIcon from '@mui/icons-material/Close';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import MenuIcon from '@mui/icons-material/Menu';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import {
   AppBar,
   Box,
-  IconButton,
-  Toolbar,
-  Typography,
   Button,
-  Stack,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Drawer,
+  IconButton,
   List,
   ListItemButton,
   ListItemText,
+  Stack,
+  Toolbar,
+  Typography,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useState } from 'react';
-import SearchBar from '../SearchBar/SearchBar';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../../context/AppContext';
 import { MDES_MENU_LINKS, MDES_SITE_INFO } from '../../../utils/constants';
 
@@ -27,8 +31,9 @@ const isActiveLink = (pathname: string, to?: string) => (to ? pathname === to : 
 
 const Header = () => {
   const location = useLocation();
-  const { globalSearch, setGlobalSearch, darkMode, toggleDarkMode } = useAppContext();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { darkMode, toggleDarkMode } = useAppContext();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [quickAccessOpen, setQuickAccessOpen] = useState(false);
 
   return (
     <AppBar position="sticky" elevation={0} sx={{ backdropFilter: 'blur(6px)' }}>
@@ -57,47 +62,30 @@ const Header = () => {
         </Stack>
       </Toolbar>
 
-      <Toolbar sx={{ gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-        <Typography variant="h6" sx={{ fontFamily: 'Fraunces, serif', mr: 1 }}>
+      <Toolbar sx={{ gap: 1.5, alignItems: 'center', justifyContent: 'space-between', py: 0.5 }}>
+        <Typography
+          variant="h6"
+          noWrap
+          sx={{
+            maxWidth: { xs: '58vw', md: '70ch' },
+            fontFamily: 'Bitter, serif',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            pr: 1,
+          }}
+        >
           {MDES_SITE_INFO.name}
         </Typography>
 
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.8, flexGrow: 1 }}>
-          {MDES_MENU_LINKS.map((link) =>
-            'to' in link ? (
-              <Button
-                key={link.label}
-                color={isActiveLink(location.pathname, link.to) ? 'secondary' : 'inherit'}
-                component={RouterLink}
-                to={link.to}
-              >
-                {link.label}
-              </Button>
-            ) : (
-              <Button
-                key={link.label}
-                color="inherit"
-                component="a"
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {link.label}
-              </Button>
-            ),
-          )}
-        </Box>
-
-        <Box sx={{ minWidth: { xs: '100%', md: 280 }, flexGrow: { xs: 1, md: 0 } }}>
-          <SearchBar
-            value={globalSearch}
-            onChange={setGlobalSearch}
-            label="Global search"
-            placeholder="Search institutions by name, district, category"
-          />
-        </Box>
-
-        <Stack direction="row" spacing={0.5}>
+        <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+          <Button
+            variant="outlined"
+            color="inherit"
+            onClick={() => setQuickAccessOpen(true)}
+            sx={{ display: { xs: 'none', md: 'inline-flex' } }}
+          >
+            Quick Access
+          </Button>
           <Button
             variant="contained"
             color="secondary"
@@ -107,32 +95,34 @@ const Header = () => {
             rel="noopener noreferrer"
             sx={{ display: { xs: 'none', md: 'inline-flex' } }}
           >
-            ADMISSIONS OPEN Click Here
+            Admissions Open
           </Button>
           <IconButton onClick={toggleDarkMode} color="inherit" aria-label="toggle dark mode">
             {darkMode ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}
           </IconButton>
-          <IconButton
-            sx={{ display: { xs: 'inline-flex', md: 'none' } }}
-            color="inherit"
-            aria-label="open menu"
-            onClick={() => setMobileOpen(true)}
-          >
+          <IconButton color="inherit" aria-label="open menu" onClick={() => setMenuOpen(true)}>
             <MenuIcon />
           </IconButton>
         </Stack>
       </Toolbar>
 
-      <Drawer anchor="right" open={mobileOpen} onClose={() => setMobileOpen(false)}>
-        <Box sx={{ width: 260 }} role="navigation" aria-label="mobile navigation">
+      <Drawer anchor="right" open={menuOpen} onClose={() => setMenuOpen(false)}>
+        <Box sx={{ width: { xs: 280, sm: 320 }, p: 1.5 }} role="navigation" aria-label="site navigation">
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ px: 1, pb: 1 }}>
+            <Typography variant="h6">Menu</Typography>
+            <IconButton color="inherit" aria-label="close menu" onClick={() => setMenuOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Stack>
           <List>
             {MDES_MENU_LINKS.map((link) =>
               'to' in link ? (
                 <ListItemButton
                   key={link.label}
                   component={RouterLink}
+                  selected={isActiveLink(location.pathname, link.to)}
                   to={link.to}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={() => setMenuOpen(false)}
                 >
                   <ListItemText primary={link.label} />
                 </ListItemButton>
@@ -143,24 +133,55 @@ const Header = () => {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={() => setMenuOpen(false)}
                 >
                   <ListItemText primary={link.label} />
                 </ListItemButton>
               ),
             )}
             <ListItemButton
+              onClick={() => {
+                setMenuOpen(false);
+                setQuickAccessOpen(true);
+              }}
+            >
+              <ListItemText primary="Open Quick Access" />
+            </ListItemButton>
+            <ListItemButton
               component="a"
               href={MDES_SITE_INFO.admissionsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => setMobileOpen(false)}
+              onClick={() => setMenuOpen(false)}
             >
-              <ListItemText primary="ADMISSIONS OPEN Click Here" />
+              <ListItemText primary="Admissions Open" />
             </ListItemButton>
           </List>
         </Box>
       </Drawer>
+
+      <Dialog open={quickAccessOpen} onClose={() => setQuickAccessOpen(false)} fullWidth maxWidth="xs">
+        <DialogTitle>Quick Access</DialogTitle>
+        <DialogContent>
+          <Stack spacing={1.2} sx={{ mt: 0.5 }}>
+            <Button component={RouterLink} to="/about" onClick={() => setQuickAccessOpen(false)}>
+              About MDES
+            </Button>
+            <Button component={RouterLink} to="/institutions" onClick={() => setQuickAccessOpen(false)}>
+              Institutions
+            </Button>
+            <Button component={RouterLink} to="/news" onClick={() => setQuickAccessOpen(false)}>
+              Latest News
+            </Button>
+            <Button component={RouterLink} to="/contact" onClick={() => setQuickAccessOpen(false)}>
+              Contact
+            </Button>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setQuickAccessOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </AppBar>
   );
 };

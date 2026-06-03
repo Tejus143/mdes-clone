@@ -1,8 +1,6 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 
 type AppContextState = {
-  globalSearch: string;
-  setGlobalSearch: (value: string) => void;
   darkMode: boolean;
   toggleDarkMode: () => void;
 };
@@ -14,7 +12,6 @@ type AppProviderProps = {
 };
 
 export const AppProvider = ({ children }: AppProviderProps) => {
-  const [globalSearch, setGlobalSearch] = useState('');
   const [darkMode, setDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
@@ -23,12 +20,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
   const value = useMemo(
     () => ({
-      globalSearch,
-      setGlobalSearch,
       darkMode,
       toggleDarkMode,
     }),
-    [globalSearch, darkMode],
+    [darkMode],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

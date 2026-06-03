@@ -12,9 +12,12 @@ import type { SortKey } from '../../../hooks/useInstitutions';
 import { CATEGORIES } from '../../../utils/constants';
 import { exportInstitutionsToCsv, exportInstitutionsToExcel } from '../../../utils/exportUtils';
 import type { Institution } from '../../../types/Institution';
+import SearchBar from '../../common/SearchBar/SearchBar';
 import DistrictSelector from '../DistrictSelector/DistrictSelector';
 
 type InstitutionFilterProps = {
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
   districts: string[];
   district: string;
   onDistrictChange: (value: string) => void;
@@ -28,6 +31,8 @@ type InstitutionFilterProps = {
 };
 
 const InstitutionFilter = ({
+  searchTerm,
+  onSearchChange,
   districts,
   district,
   onDistrictChange,
@@ -43,10 +48,19 @@ const InstitutionFilter = ({
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: '1fr', md: 'repeat(6, minmax(0,1fr))' },
+        gridTemplateColumns: { xs: '1fr', md: 'repeat(7, minmax(0,1fr))' },
         gap: 1.2,
       }}
     >
+      <Box sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
+        <SearchBar
+          value={searchTerm}
+          onChange={onSearchChange}
+          label="Search institutions"
+          placeholder="Search by name, district, category"
+        />
+      </Box>
+
       <Box sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
         <DistrictSelector districts={districts} value={district} onChange={onDistrictChange} />
       </Box>

@@ -5,11 +5,10 @@ import Loader from '../../components/common/Loader/Loader';
 import Pagination from '../../components/common/Pagination/Pagination';
 import InstitutionFilter from '../../components/institutions/InstitutionFilter/InstitutionFilter';
 import InstitutionGrid from '../../components/institutions/InstitutionGrid/InstitutionGrid';
-import { useAppContext } from '../../context/AppContext';
 import { useInstitutions, type SortKey } from '../../hooks/useInstitutions';
 
 const Institutions = () => {
-  const { globalSearch } = useAppContext();
+  const [searchTerm, setSearchTerm] = useState('');
   const [district, setDistrict] = useState('All Districts');
   const [category, setCategory] = useState('All Categories');
   const [sortBy, setSortBy] = useState<SortKey>('name');
@@ -17,7 +16,7 @@ const Institutions = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const { pagedInstitutions, filteredInstitutions, loading, error, totalPages, districts } = useInstitutions(
-    globalSearch,
+    searchTerm,
     district,
     category,
     sortBy,
@@ -38,6 +37,11 @@ const Institutions = () => {
       <Typography color="text.secondary">{pageHeader}</Typography>
 
       <InstitutionFilter
+        searchTerm={searchTerm}
+        onSearchChange={(value) => {
+          setSearchTerm(value);
+          setPage(1);
+        }}
         districts={districts}
         district={district}
         onDistrictChange={(value) => {
