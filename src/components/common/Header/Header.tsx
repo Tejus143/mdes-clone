@@ -9,15 +9,17 @@ import {
   AppBar,
   Box,
   Button,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Drawer,
+  Divider,
   IconButton,
   List,
   ListItemButton,
   ListItemText,
+  Paper,
   Stack,
   Toolbar,
   Typography,
@@ -62,42 +64,95 @@ const Header = () => {
         </Stack>
       </Toolbar>
 
-      <Toolbar sx={{ gap: 1.5, alignItems: 'center', justifyContent: 'space-between', py: 0.5 }}>
+      <Toolbar
+        sx={{
+          gap: 2,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          py: 0.75,
+          px: { xs: 1.5, md: 2.5 },
+          bgcolor: 'background.paper',
+          color: 'text.primary',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          flexWrap: 'wrap',
+        }}
+      >
         <Box
           component={RouterLink}
           to="/"
-          sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none', color: 'inherit', minWidth: 0 }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            textDecoration: 'none',
+            color: 'inherit',
+            minWidth: 0,
+            flexShrink: 0,
+          }}
         >
           <Box
             component="img"
             src="https://mdes.in/wp-content/themes/MDES/images/logo.png"
             alt="MDES Logo"
-            sx={{ height: { xs: 44, md: 54 }, width: 'auto', flexShrink: 0 }}
+            sx={{ height: { xs: 46, md: 58 }, width: 'auto', flexShrink: 0 }}
           />
           <Typography
-            variant="h6"
-            noWrap
             sx={{
               display: { xs: 'none', sm: 'block' },
-              maxWidth: { sm: '40vw', md: '60ch' },
               fontFamily: 'Bitter, serif',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
+              fontWeight: 700,
+              color: 'secondary.main',
+              lineHeight: 1.02,
+              fontSize: { sm: '0.96rem', md: '1.1rem' },
+              textTransform: 'uppercase',
+              letterSpacing: 0.3,
+              maxWidth: { sm: 220, md: 340 },
             }}
           >
-            {MDES_SITE_INFO.name}
+            Mysore Diocesan Educational Society (MDES)
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-          <Button
-            variant="outlined"
-            color="inherit"
-            onClick={() => setQuickAccessOpen(true)}
-            sx={{ display: { xs: 'none', md: 'inline-flex' } }}
-          >
-            Quick Access
-          </Button>
+        <Stack
+          direction="row"
+          spacing={{ xs: 0.5, md: 1.5 }}
+          sx={{
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            flex: 1,
+            display: { xs: 'none', md: 'flex' },
+          }}
+        >
+          {MDES_MENU_LINKS.map((link) =>
+            'to' in link ? (
+              <Button
+                key={link.label}
+                component={RouterLink}
+                to={link.to}
+                color={isActiveLink(location.pathname, link.to) ? 'secondary' : 'inherit'}
+                sx={{ fontWeight: 700, px: 1.2, minWidth: 'auto' }}
+              >
+                {link.label}
+              </Button>
+            ) : (
+              <Button
+                key={link.label}
+                component="a"
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                color="inherit"
+                sx={{ fontWeight: 700, px: 1.2, minWidth: 'auto' }}
+              >
+                {link.label}
+              </Button>
+            ),
+          )}
+        </Stack>
+
+        <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', flexShrink: 0 }}>
           <Button
             variant="contained"
             color="secondary"
@@ -105,28 +160,57 @@ const Header = () => {
             href={MDES_SITE_INFO.admissionsUrl}
             target="_blank"
             rel="noopener noreferrer"
+            sx={{
+              display: { xs: 'none', md: 'inline-flex' },
+              borderRadius: 999,
+              px: 2.2,
+              fontWeight: 700,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            ADMISSIONS OPEN Click Here
+          </Button>
+          <IconButton
+            onClick={toggleDarkMode}
+            color="inherit"
+            aria-label="toggle dark mode"
             sx={{ display: { xs: 'none', md: 'inline-flex' } }}
           >
-            Admissions Open
-          </Button>
-          <IconButton onClick={toggleDarkMode} color="inherit" aria-label="toggle dark mode">
             {darkMode ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}
           </IconButton>
-          <IconButton color="inherit" aria-label="open menu" onClick={() => setMenuOpen(true)}>
+          <IconButton
+            color="inherit"
+            aria-label="open menu"
+            aria-expanded={menuOpen}
+            aria-controls="header-menu-panel"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+          >
             <MenuIcon />
           </IconButton>
         </Stack>
       </Toolbar>
 
-      <Drawer anchor="right" open={menuOpen} onClose={() => setMenuOpen(false)}>
-        <Box sx={{ width: { xs: 280, sm: 320 }, p: 1.5 }} role="navigation" aria-label="site navigation">
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ px: 1, pb: 1 }}>
+      <Collapse in={menuOpen} timeout="auto" unmountOnExit>
+        <Paper
+          id="header-menu-panel"
+          square
+          elevation={3}
+          sx={{
+            mx: { xs: 1, md: 2 },
+            mb: 1,
+            borderRadius: 2,
+            overflow: 'hidden',
+          }}
+        >
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ px: 2, py: 1.25 }}>
             <Typography variant="h6">Menu</Typography>
             <IconButton color="inherit" aria-label="close menu" onClick={() => setMenuOpen(false)}>
               <CloseIcon />
             </IconButton>
           </Stack>
-          <List>
+          <Divider />
+          <List sx={{ py: 0 }}>
             {MDES_MENU_LINKS.map((link) =>
               'to' in link ? (
                 <ListItemButton
@@ -169,8 +253,8 @@ const Header = () => {
               <ListItemText primary="Admissions Open" />
             </ListItemButton>
           </List>
-        </Box>
-      </Drawer>
+        </Paper>
+      </Collapse>
 
       <Dialog open={quickAccessOpen} onClose={() => setQuickAccessOpen(false)} fullWidth maxWidth="xs">
         <DialogTitle>Quick Access</DialogTitle>
