@@ -1,6 +1,7 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {
   Alert,
+  Box,
   Button,
   Card,
   CardActions,
@@ -52,26 +53,50 @@ const News = () => {
       <Typography color="text.secondary">Home / News</Typography>
 
       {news.length ? (
-        <Stack spacing={2}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+            },
+            gap: 2.5,
+          }}
+        >
           {news.map((item) => (
-            <Card key={item.id}>
+            <Card
+              key={item.id}
+              sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+            >
               {item.imageUrl ? (
-                <CardMedia component="img" height="220" image={item.imageUrl} alt={item.title} />
+                <CardMedia
+                  component="img"
+                  image={item.imageUrl}
+                  alt={item.title}
+                  sx={{
+                    width: '100%',
+                    height: 180,
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
               ) : null}
-              <CardContent>
+              <CardContent sx={{ flex: 1 }}>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                   {formatDate(item.date)}
                 </Typography>
-                <Typography variant="h6" sx={{ mb: 0.6 }}>
+                <Typography variant="h6" sx={{ mb: 0.6, fontSize: '1rem' }}>
                   {item.title}
                 </Typography>
-                <Typography>{item.excerpt}</Typography>
+                <Typography variant="body2">{item.excerpt}</Typography>
               </CardContent>
               <CardActions>
                 <Button
                   component={RouterLink}
                   to={`/news/${item.id}`}
                   variant="contained"
+                  size="small"
                   endIcon={<ArrowForwardIcon />}
                 >
                   Read More
@@ -79,7 +104,7 @@ const News = () => {
               </CardActions>
             </Card>
           ))}
-        </Stack>
+        </Box>
       ) : (
         <EmptyState title="No news available" />
       )}

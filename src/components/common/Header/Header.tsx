@@ -63,19 +63,31 @@ const Header = () => {
       </Toolbar>
 
       <Toolbar sx={{ gap: 1.5, alignItems: 'center', justifyContent: 'space-between', py: 0.5 }}>
-        <Typography
-          variant="h6"
-          noWrap
-          sx={{
-            maxWidth: { xs: '58vw', md: '70ch' },
-            fontFamily: 'Bitter, serif',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            pr: 1,
-          }}
+        <Box
+          component={RouterLink}
+          to="/"
+          sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none', color: 'inherit', minWidth: 0 }}
         >
-          {MDES_SITE_INFO.name}
-        </Typography>
+          <Box
+            component="img"
+            src="https://mdes.in/wp-content/themes/MDES/images/logo.png"
+            alt="MDES Logo"
+            sx={{ height: { xs: 44, md: 54 }, width: 'auto', flexShrink: 0 }}
+          />
+          <Typography
+            variant="h6"
+            noWrap
+            sx={{
+              display: { xs: 'none', sm: 'block' },
+              maxWidth: { sm: '40vw', md: '60ch' },
+              fontFamily: 'Bitter, serif',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {MDES_SITE_INFO.name}
+          </Typography>
+        </Box>
 
         <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
           <Button
