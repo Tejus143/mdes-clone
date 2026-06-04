@@ -121,7 +121,7 @@ const Header = ({ onInquiryClick }: HeaderProps) => {
         >
           <Box
             component="img"
-            src="https://mdes.in/wp-content/themes/MDES/images/logo.png"
+            src="/mdes-assets/logo.png"
             alt="MDES Logo"
             sx={{ height: { xs: 46, md: 58 }, width: 'auto', flexShrink: 0 }}
           />
