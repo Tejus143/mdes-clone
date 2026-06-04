@@ -1,4 +1,6 @@
-import { Card, CardContent, CardMedia, Stack, Typography } from '@mui/material';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+import { Avatar, Card, CardContent, Stack, Typography } from '@mui/material';
 import type { CouncilMember } from '../../../types/CouncilMember';
 
 type CouncilCardProps = {
@@ -6,44 +8,22 @@ type CouncilCardProps = {
   showContacts?: boolean;
 };
 
-const CouncilCard = ({ member, showContacts = true }: CouncilCardProps) => (
-  <Card
-    sx={{
-      height: '100%',
-      overflow: 'hidden',
-      borderRadius: 4,
-      boxShadow: '0 18px 40px rgba(15, 35, 67, 0.16)',
-      bgcolor: 'background.paper',
-    }}
-  >
-    {member.photoUrl ? (
-      <CardMedia
-        component="img"
-        image={member.photoUrl}
-        alt={member.name}
-        sx={{
-          width: '100%',
-          aspectRatio: '1 / 1.05',
-          objectFit: 'cover',
-          display: 'block',
-        }}
-      />
-    ) : null}
-    <CardContent sx={{ px: 2.5, pt: 2.25, pb: 2.5, textAlign: 'center' }}>
-      <Typography variant="subtitle1" sx={{ fontWeight: 800, color: 'primary.main', mb: 1 }}>
-        {member.name}
+const CouncilCard = ({ member }: CouncilCardProps) => (
+  <Card sx={{ height: '100%' }}>
+    <CardContent sx={{ textAlign: 'center', p: 3 }}>
+      <Stack spacing={1.2} sx={{ alignItems: 'center', mb: 1.5 }}>
+        <Avatar src={member.photoUrl} alt={member.name} sx={{ width: 104, height: 104, bgcolor: 'primary.main', fontSize: '2rem' }}>
+          {member.name.charAt(0)}
+        </Avatar>
+        <Typography variant="h6">{member.name}</Typography>
+      </Stack>
+      <Typography color="secondary.main" fontWeight={800} sx={{ mb: 1.5 }}>
+        {member.designation}
       </Typography>
-      <Typography sx={{ color: 'text.primary', lineHeight: 1.4 }}>{member.designation}</Typography>
-      {showContacts ? (
-        <Stack spacing={0.4} sx={{ mt: 1.5 }}>
-          <Typography variant="body2" color="text.secondary">
-            {member.phone}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {member.email}
-          </Typography>
-        </Stack>
-      ) : null}
+      <Stack spacing={0.7} color="text.secondary">
+        <Stack direction="row" spacing={.75} justifyContent="center" alignItems="center"><PhoneOutlinedIcon fontSize="small" /><Typography variant="body2">{member.phone}</Typography></Stack>
+        <Stack direction="row" spacing={.75} justifyContent="center" alignItems="center"><EmailOutlinedIcon fontSize="small" /><Typography variant="body2">{member.email}</Typography></Stack>
+      </Stack>
     </CardContent>
   </Card>
 );
