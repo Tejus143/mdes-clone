@@ -5,6 +5,7 @@ import type { CouncilMember } from '../../../types/CouncilMember';
 
 type CouncilCardProps = {
   member: CouncilMember;
+  showContacts?: boolean;
 };
 
 const CouncilCard = ({ member }: CouncilCardProps) => (
