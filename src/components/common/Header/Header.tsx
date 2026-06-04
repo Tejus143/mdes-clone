@@ -5,7 +5,6 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
