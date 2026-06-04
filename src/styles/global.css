@@ -1,30 +1,157 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Manrope:wght@500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Manrope:wght@500;700;800&family=Bitter:wght@500;700&family=Sora:wght@400;500;600;700&display=swap');
 
 :root {
-  font-family: 'Manrope', 'Segoe UI', sans-serif;
-  line-height: 1.5;
+  font-family: 'Sora', 'Manrope', 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
   font-weight: 500;
   color: #0f172a;
-  background-color: #f4f8fb;
-  font-synthesis: none;
+  background-color: #edf3fb;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 15% 10%, #d9f2ff 0%, transparent 45%),
-    radial-gradient(circle at 85% 8%, #ffe6cf 0%, transparent 40%),
-    linear-gradient(180deg, #eef5fa 0%, #f7fbff 80%);
+  background: radial-gradient(circle at 12% 16%, rgba(115, 185, 255, 0.18), transparent 25%),
+    radial-gradient(circle at 82% 12%, rgba(255, 166, 86, 0.14), transparent 30%),
+    linear-gradient(180deg, #f7f7fb 0%, #eef4fd 100%);
+  color: #102a4a;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.18), transparent 18%),
+    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.12), transparent 22%);
+  z-index: -1;
+}
+
+img,
+video,
+iframe {
+  max-width: 100%;
+  display: block;
 }
 
 a {
   color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(21, 101, 192, 0.45);
+  outline-offset: 3px;
+}
+
+button,
+.MuiButton-root {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover,
+.MuiCard-root:hover {
+  transform: translateY(-2px);
+}
+
+.MuiCard-root {
+  transition: transform 0.18s ease, box-shadow 0.2s ease;
+}
+
+.scroll-progress-shell {
+  position: fixed;
+  z-index: 1600;
+  inset: 0 auto auto 0;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.scroll-progress-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #f15a25, #ffb85c);
+  transition: width 120ms ease;
+}
+
+.floating-action {
+  position: fixed;
+  z-index: 1500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0b61c5, #f15a25);
+  box-shadow: 0 18px 38px rgba(12, 42, 84, 0.22);
+  text-decoration: none;
+}
+
+.floating-whatsapp {
+  right: 1rem;
+  bottom: 1.5rem;
+}
+
+.floating-call {
+  left: 1rem;
+  bottom: 1.5rem;
+  display: none;
+}
+
+.back-to-top {
+  right: 1rem;
+  bottom: 8.3rem;
+}
+
+@media (max-width: 900px) {
+  .back-to-top {
+    bottom: 9rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .floating-call {
+    display: inline-flex;
+  }
+}
+
+.MuiBackdrop-root {
+  background: rgba(10, 26, 56, 0.62);
+}
+
+.MuiPaper-root {
+  background-clip: padding-box;
+}
+
+.MuiTypography-h1,
+.MuiTypography-h2,
+.MuiTypography-h3,
+.MuiTypography-h4,
+.MuiTypography-h5 {
+  font-family: 'Bitter', serif;
 }
