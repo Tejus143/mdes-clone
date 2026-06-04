@@ -8,11 +8,24 @@ const OFFICIAL_SITE_URL = 'https://mdes.in';
 const OFFICIAL_API_BASE = `${OFFICIAL_SITE_URL}/wp-json/wp/v2`;
 const REQUEST_TIMEOUT_MS = 4500;
 const DEFAULT_OFFICIAL_BANNER_URL = `${OFFICIAL_SITE_URL}/wp-content/uploads/2022/12/MDS-banner-1.jpg`;
+const LOCAL_BANNER_URL = '/mdes-assets/banner.jpg';
+const LOCAL_SITEMAP_URLS = {
+  posts: '/mdes-cache/sitemaps/wp-sitemap-posts-post-1.xml',
+  pages: '/mdes-cache/sitemaps/wp-sitemap-posts-page-1.xml',
+  latestNews: '/mdes-cache/sitemaps/wp-sitemap-posts-latest_news-1.xml',
+  frontBanners: '/mdes-cache/sitemaps/wp-sitemap-posts-front_banners-1.xml',
+  frontGallery: '/mdes-cache/sitemaps/wp-sitemap-posts-front_gallery-1.xml',
+  careers: '/mdes-cache/sitemaps/wp-sitemap-posts-careers-1.xml',
+  upcomingEvent: '/mdes-cache/sitemaps/wp-sitemap-posts-upcoming_event-1.xml',
+  governingCouncil: '/mdes-cache/sitemaps/wp-sitemap-posts-governing_council-1.xml',
+  scrollingNews: '/mdes-cache/sitemaps/wp-sitemap-posts-scrolling_news-1.xml',
+  categories: '/mdes-cache/sitemaps/wp-sitemap-taxonomies-category-1.xml',
+} as const;
 const THEME_IMAGE_URLS = {
-  president: `${OFFICIAL_SITE_URL}/wp-content/themes/MDES/images/President.jpg`,
-  vicePresident: `${OFFICIAL_SITE_URL}/wp-content/uploads/2022/12/Vice_President.jpg`,
-  secretary: `${OFFICIAL_SITE_URL}/wp-content/themes/MDES/images/Secretary.jpg`,
-  treasurer: `${OFFICIAL_SITE_URL}/wp-content/themes/MDES/images/treasurer.jpg`,
+  president: '/mdes-assets/President.jpg',
+  vicePresident: '/mdes-assets/Vice_President.jpg',
+  secretary: '/mdes-assets/Secretary.jpg',
+  treasurer: '/mdes-assets/treasurer.jpg',
 } as const;
 
 const SITEMAP_URLS = {
@@ -109,7 +122,25 @@ const fetchJson = async <T>(url: string): Promise<T> => {
   }
 };
 
-const fetchSitemapUrls = async (url: string): Promise<string[]> => {
+const fetchSitemapUrls = async (url: string, localUrl?: string): Promise<string[]> => {
+  const parseSitemap = (xml: string) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xml, 'application/xml');
+    const locations = Array.from(doc.getElementsByTagName('loc'));
+    return locations.map((node) => node.textContent?.trim() ?? '').filter(Boolean);
+  };
+
+  if (localUrl) {
+    try {
+      const localResponse = await fetch(localUrl);
+      if (localResponse.ok) {
+        return parseSitemap(await localResponse.text());
+      }
+    } catch {
+      // Fall through to remote request.
+    }
+  }
+
   const { controller, timeoutId } = createTimeoutController();
 
   try {
@@ -118,12 +149,7 @@ const fetchSitemapUrls = async (url: string): Promise<string[]> => {
       throw new Error(`Sitemap request failed with status ${response.status}`);
     }
 
-    const xml = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xml, 'application/xml');
-    const locations = Array.from(doc.getElementsByTagName('loc'));
-
-    return locations.map((node) => node.textContent?.trim() ?? '').filter(Boolean);
+    return parseSitemap(await response.text());
   } finally {
     window.clearTimeout(timeoutId);
   }
@@ -323,7 +349,7 @@ export const officialMdesService = {
   async getInstitutionDirectories(): Promise<Institution[]> {
     const [pages, sitemapUrls] = await Promise.all([
       fetchJson<WpPage[]>(`${OFFICIAL_API_BASE}/pages?per_page=100`),
-      fetchSitemapUrls(SITEMAP_URLS.pages),
+      fetchSitemapUrls(SITEMAP_URLS.pages, LOCAL_SITEMAP_URLS.pages),
     ]);
 
     const fromApi = pages.filter(isInstitutionDirectoryPage).map(toInstitution);
@@ -338,7 +364,7 @@ export const officialMdesService = {
     const [posts, media, sitemapUrls] = await Promise.all([
       fetchJson<WpCouncilPost[]>(`${OFFICIAL_API_BASE}/governing_council?per_page=100`),
       fetchJson<WpMedia[]>(`${OFFICIAL_API_BASE}/media?per_page=100`),
-      fetchSitemapUrls(SITEMAP_URLS.governingCouncil),
+      fetchSitemapUrls(SITEMAP_URLS.governingCouncil, LOCAL_SITEMAP_URLS.governingCouncil),
     ]);
 
     const mediaById = new Map<number, WpMedia>(media.map((item) => [item.id, item]));
@@ -360,7 +386,7 @@ export const officialMdesService = {
   async getCareers(): Promise<Career[]> {
     const [posts, sitemapUrls] = await Promise.all([
       fetchJson<WpCareerPost[]>(`${OFFICIAL_API_BASE}/careers?per_page=100`),
-      fetchSitemapUrls(SITEMAP_URLS.careers),
+      fetchSitemapUrls(SITEMAP_URLS.careers, LOCAL_SITEMAP_URLS.careers),
     ]);
 
     const fromApi = posts.map(toCareer);
@@ -373,7 +399,7 @@ export const officialMdesService = {
     const [posts, media, sitemapUrls] = await Promise.all([
       fetchJson<WpLatestNewsPost[]>(`${OFFICIAL_API_BASE}/latest_news?per_page=100`),
       fetchJson<WpMedia[]>(`${OFFICIAL_API_BASE}/media?per_page=100`),
-      fetchSitemapUrls(SITEMAP_URLS.latestNews),
+      fetchSitemapUrls(SITEMAP_URLS.latestNews, LOCAL_SITEMAP_URLS.latestNews),
     ]);
 
     const mediaById = new Map<number, WpMedia>(media.map((item) => [item.id, item]));
@@ -385,6 +411,11 @@ export const officialMdesService = {
 
   async getPrimaryBannerUrl(): Promise<string> {
     try {
+      const localResponse = await fetch(LOCAL_BANNER_URL);
+      if (localResponse.ok) {
+        return LOCAL_BANNER_URL;
+      }
+
       const bannerMedia = await fetchJson<WpMedia[]>(`${OFFICIAL_API_BASE}/media?search=MDS-banner-1&per_page=50`);
       const exactMatch = bannerMedia.find((item) => item.source_url.includes('MDS-banner-1.jpg'));
       return exactMatch?.source_url ?? bannerMedia[0]?.source_url ?? DEFAULT_OFFICIAL_BANNER_URL;

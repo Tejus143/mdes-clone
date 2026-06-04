@@ -1,10 +1,14 @@
 import CloseIcon from '@mui/icons-material/Close';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import InstagramIcon from '@mui/icons-material/Instagram';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import MenuIcon from '@mui/icons-material/Menu';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 import {
   AppBar,
   Box,
@@ -16,6 +20,7 @@ import {
   DialogTitle,
   Divider,
   IconButton,
+  Link,
   List,
   ListItemButton,
   ListItemText,
@@ -29,13 +34,21 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../../context/AppContext';
 import { MDES_MENU_LINKS, MDES_SITE_INFO } from '../../../utils/constants';
 
+type HeaderProps = {
+  onInquiryClick: () => void;
+};
+
 const isActiveLink = (pathname: string, to?: string) => (to ? pathname === to : false);
 
-const Header = () => {
+const Header = ({ onInquiryClick }: HeaderProps) => {
   const location = useLocation();
   const { darkMode, toggleDarkMode } = useAppContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const [quickAccessOpen, setQuickAccessOpen] = useState(false);
+
+  const phoneHref = `tel:+918212415333`;
+  const mailHref = `mailto:${MDES_SITE_INFO.email}`;
+  const whatsappHref = 'https://wa.me/918212415333';
 
   return (
     <AppBar position="sticky" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
@@ -43,25 +56,46 @@ const Header = () => {
         variant="dense"
         sx={{
           justifyContent: 'space-between',
+<<<<<<< HEAD
           bgcolor: '#071f3d',
           color: 'common.white',
           minHeight: '32px',
           px: { xs: 1.5, md: 4 },
+=======
+          bgcolor: 'primary.dark',
+          minHeight: '42px',
+          px: { xs: 1, md: 2 },
+          flexWrap: 'wrap',
+>>>>>>> origin/main
         }}
       >
-        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-            <PhoneOutlinedIcon sx={{ fontSize: 16 }} />
-            <Typography variant="caption">{MDES_SITE_INFO.phone}</Typography>
-          </Stack>
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', display: { xs: 'none', md: 'flex' } }}>
-            <EmailOutlinedIcon sx={{ fontSize: 16 }} />
-            <Typography variant="caption">{MDES_SITE_INFO.email}</Typography>
-          </Stack>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
+          <Button component="a" href={phoneHref} sx={{ color: 'common.white', typography: 'caption', px: 0 }}>
+            <PhoneOutlinedIcon sx={{ fontSize: 16, mr: 0.5 }} />
+            {MDES_SITE_INFO.phone}
+          </Button>
+          <Button component="a" href={mailHref} sx={{ color: 'common.white', typography: 'caption', px: 0, display: { xs: 'none', sm: 'inline-flex' } }}>
+            <EmailOutlinedIcon sx={{ fontSize: 16, mr: 0.5 }} />
+            {MDES_SITE_INFO.email}
+          </Button>
+          <Button component="a" href={whatsappHref} target="_blank" rel="noopener noreferrer" sx={{ color: 'common.white', typography: 'caption', px: 0 }}>
+            <WhatsAppIcon sx={{ fontSize: 16, mr: 0.5 }} />
+            WhatsApp
+          </Button>
         </Stack>
-        <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-          <LocationOnOutlinedIcon sx={{ fontSize: 16 }} />
-          <Typography variant="caption">{MDES_SITE_INFO.location}</Typography>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
+          <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" color="inherit" aria-label="Facebook" sx={{ color: 'common.white' }}>
+            <FacebookIcon sx={{ fontSize: 18 }} />
+          </Link>
+          <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" color="inherit" aria-label="Instagram" sx={{ color: 'common.white' }}>
+            <InstagramIcon sx={{ fontSize: 18 }} />
+          </Link>
+          <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer" color="inherit" aria-label="LinkedIn" sx={{ color: 'common.white' }}>
+            <LinkedInIcon sx={{ fontSize: 18 }} />
+          </Link>
+          <Link href="https://youtube.com" target="_blank" rel="noopener noreferrer" color="inherit" aria-label="YouTube" sx={{ color: 'common.white' }}>
+            <YouTubeIcon sx={{ fontSize: 18 }} />
+          </Link>
         </Stack>
       </Toolbar>
 
@@ -95,7 +129,7 @@ const Header = () => {
         >
           <Box
             component="img"
-            src="https://mdes.in/wp-content/themes/MDES/images/logo.png"
+            src="/mdes-assets/logo.png"
             alt="MDES Logo"
             sx={{ height: { xs: 50, md: 68 }, width: 'auto', flexShrink: 0 }}
           />
@@ -144,15 +178,19 @@ const Header = () => {
           )}
         </Stack>
 
-        <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', flexShrink: 0 }}>
+        <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', flexShrink: 0, flexWrap: 'wrap' }}>
           <Button
             variant="contained"
             color="secondary"
             component={RouterLink}
             to="/admissions"
             sx={{
+<<<<<<< HEAD
               display: { xs: 'none', md: 'inline-flex' },
               borderRadius: 0,
+=======
+              borderRadius: 999,
+>>>>>>> origin/main
               px: 2.2,
               fontWeight: 700,
               whiteSpace: 'nowrap',
@@ -160,12 +198,15 @@ const Header = () => {
           >
             Apply Now
           </Button>
-          <IconButton
-            onClick={toggleDarkMode}
+          <Button
+            variant="outlined"
             color="inherit"
-            aria-label="toggle dark mode"
-            sx={{ display: { xs: 'none', md: 'inline-flex' } }}
+            onClick={onInquiryClick}
+            sx={{ borderRadius: 999, px: 2.2, fontWeight: 700, whiteSpace: 'nowrap' }}
           >
+            Quick Inquiry
+          </Button>
+          <IconButton onClick={toggleDarkMode} color="inherit" aria-label="toggle dark mode" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>
             {darkMode ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}
           </IconButton>
           <IconButton
