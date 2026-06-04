@@ -8,7 +8,7 @@ type CouncilListProps = {
 
 const CouncilList = ({ members }: CouncilListProps) => {
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2 }}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }, gap: 2 }}>
       {members.map((member) => (
         <CouncilCard key={member.id} member={member} />
       ))}

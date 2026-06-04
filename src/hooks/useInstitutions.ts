@@ -55,8 +55,8 @@ export const useInstitutions = (
   const totalPages = Math.max(1, Math.ceil(filteredInstitutions.length / PAGE_SIZE));
 
   const districts = useMemo(
-    () => ['All Districts', ...new Set(institutions.map((institution) => institution.district))],
-    [institutions],
+    () => DISTRICTS,
+    [],
   );
 
   const pagedInstitutions = useMemo(() => {
@@ -71,6 +71,6 @@ export const useInstitutions = (
     loading,
     error,
     totalPages,
-    districts: districts.length > 1 ? districts : DISTRICTS,
+    districts,
   };
 };

@@ -1,10 +1,25 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import Dashboard from '../../pages/Dashboard/Dashboard';
 import { institutionService } from '../../services/institutionService';
+import { latestNewsService } from '../../services/latestNewsService';
+import { officialMdesService } from '../../services/officialMdesService';
 
 vi.mock('../../services/institutionService', () => ({
   institutionService: {
     getInstitutions: vi.fn(),
+  },
+}));
+
+vi.mock('../../services/latestNewsService', () => ({
+  latestNewsService: {
+    getLatestNews: vi.fn(),
+  },
+}));
+
+vi.mock('../../services/officialMdesService', () => ({
+  officialMdesService: {
+    getPrimaryBannerUrl: vi.fn(),
   },
 }));
 
@@ -24,11 +39,17 @@ describe('Dashboard', () => {
         admissionContact: '123',
       },
     ]);
+    vi.mocked(latestNewsService.getLatestNews).mockResolvedValue([]);
+    vi.mocked(officialMdesService.getPrimaryBannerUrl).mockResolvedValue('banner.jpg');
 
-    render(<Dashboard />);
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>,
+    );
 
     await waitFor(() => {
-      expect(screen.getByText('Total Institutions')).toBeInTheDocument();
+      expect(screen.getByText('Institutions')).toBeInTheDocument();
       expect(screen.getAllByText('1').length).toBeGreaterThan(0);
     });
   });

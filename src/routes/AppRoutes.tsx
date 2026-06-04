@@ -1,5 +1,5 @@
 import { Box, Container, CssBaseline, ThemeProvider } from '@mui/material';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import Footer from '../components/common/Footer/Footer';
 import Header from '../components/common/Header/Header';
 import BreadcrumbsNav from '../components/common/BreadcrumbsNav/BreadcrumbsNav';
@@ -19,20 +19,21 @@ import Photos from '../pages/Photos/Photos';
 import Videos from '../pages/Videos/Videos';
 import { getAppTheme } from '../theme/muiTheme';
 
-const AppRoutes = () => {
-  const { darkMode } = useAppContext();
-  const theme = getAppTheme(darkMode);
-
+const SiteContent = () => {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BrowserRouter>
-        <Header />
-        <Container maxWidth="xl" sx={{ py: 3 }}>
-          <BreadcrumbsNav />
-          <Box component="main" role="main" sx={{ minHeight: '65vh' }}>
+    <>
+      <Header />
+      <Box component="main" role="main" sx={{ minHeight: '65vh' }}>
+        {isHome ? (
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+          </Routes>
+        ) : (
+          <Container maxWidth="xl" sx={{ py: { xs: 3, md: 6 } }}>
+            <BreadcrumbsNav />
             <Routes>
-              <Route path="/" element={<Dashboard />} />
               <Route path="/about" element={<About />} />
               <Route path="/news" element={<News />} />
               <Route path="/news/:newsId" element={<NewsDetails />} />
@@ -47,9 +48,23 @@ const AppRoutes = () => {
               <Route path="/contact-us" element={<ContactUs />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </Box>
-          <Footer />
-        </Container>
+          </Container>
+        )}
+      </Box>
+      <Footer />
+    </>
+  );
+};
+
+const AppRoutes = () => {
+  const { darkMode } = useAppContext();
+  const theme = getAppTheme(darkMode);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <SiteContent />
       </BrowserRouter>
     </ThemeProvider>
   );

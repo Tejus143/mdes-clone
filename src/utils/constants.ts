@@ -42,7 +42,6 @@ export const DISTRICTS = [
   'Mandya',
   'Kodagu',
   'Chamarajanagar',
-  'Hassan',
 ];
 
 export const CATEGORIES = ['All Categories', 'School', 'College'];

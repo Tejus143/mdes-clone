@@ -24,7 +24,13 @@ const GoverningCouncil = () => {
 
   return (
     <Stack spacing={2.5}>
-      <Typography variant="h4">Governing Council</Typography>
+      <Box sx={{ maxWidth: 760 }}>
+        <Typography color="secondary.main" fontWeight={800}>LEADERSHIP & GOVERNANCE</Typography>
+        <Typography variant="h3">MDES Leadership Team</Typography>
+        <Typography color="text.secondary" sx={{ mt: 1 }}>
+          Meet the people guiding our mission of value-based quality education with commitment, transparency, and service.
+        </Typography>
+      </Box>
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 1.5 }}>
         <SearchBar
           value={search}

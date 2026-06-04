@@ -38,14 +38,15 @@ const Header = () => {
   const [quickAccessOpen, setQuickAccessOpen] = useState(false);
 
   return (
-    <AppBar position="sticky" elevation={0} sx={{ backdropFilter: 'blur(6px)' }}>
+    <AppBar position="sticky" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
       <Toolbar
         variant="dense"
         sx={{
           justifyContent: 'space-between',
-          bgcolor: 'primary.dark',
-          minHeight: '36px',
-          px: { xs: 1, md: 2 },
+          bgcolor: '#071f3d',
+          color: 'common.white',
+          minHeight: '32px',
+          px: { xs: 1.5, md: 4 },
         }}
       >
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
@@ -69,8 +70,9 @@ const Header = () => {
           gap: 2,
           alignItems: 'center',
           justifyContent: 'space-between',
-          py: 0.75,
-          px: { xs: 1.5, md: 2.5 },
+          minHeight: { xs: 76, md: 96 },
+          py: 1,
+          px: { xs: 1.5, md: 4 },
           bgcolor: 'background.paper',
           color: 'text.primary',
           borderBottom: '1px solid',
@@ -84,7 +86,7 @@ const Header = () => {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            gap: 1.5,
+            gap: 1.2,
             textDecoration: 'none',
             color: 'inherit',
             minWidth: 0,
@@ -95,28 +97,13 @@ const Header = () => {
             component="img"
             src="https://mdes.in/wp-content/themes/MDES/images/logo.png"
             alt="MDES Logo"
-            sx={{ height: { xs: 46, md: 58 }, width: 'auto', flexShrink: 0 }}
+            sx={{ height: { xs: 50, md: 68 }, width: 'auto', flexShrink: 0 }}
           />
-          <Typography
-            sx={{
-              display: { xs: 'none', sm: 'block' },
-              fontFamily: 'Bitter, serif',
-              fontWeight: 700,
-              color: 'secondary.main',
-              lineHeight: 1.02,
-              fontSize: { sm: '0.96rem', md: '1.1rem' },
-              textTransform: 'uppercase',
-              letterSpacing: 0.3,
-              maxWidth: { sm: 220, md: 340 },
-            }}
-          >
-            Mysore Diocesan Educational Society (MDES)
-          </Typography>
         </Box>
 
         <Stack
           direction="row"
-          spacing={{ xs: 0.5, md: 1.5 }}
+          spacing={{ xs: 0.5, md: .5 }}
           sx={{
             alignItems: 'center',
             flexWrap: 'wrap',
@@ -131,8 +118,13 @@ const Header = () => {
                 key={link.label}
                 component={RouterLink}
                 to={link.to}
-                color={isActiveLink(location.pathname, link.to) ? 'secondary' : 'inherit'}
-                sx={{ fontWeight: 700, px: 1.2, minWidth: 'auto' }}
+                color="inherit"
+                sx={{
+                  fontWeight: 700,
+                  px: 1.15,
+                  minWidth: 'auto',
+                  color: isActiveLink(location.pathname, link.to) ? 'secondary.main' : 'inherit',
+                }}
               >
                 {link.label}
               </Button>
@@ -156,19 +148,17 @@ const Header = () => {
           <Button
             variant="contained"
             color="secondary"
-            component="a"
-            href={MDES_SITE_INFO.admissionsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            component={RouterLink}
+            to="/admissions"
             sx={{
               display: { xs: 'none', md: 'inline-flex' },
-              borderRadius: 999,
+              borderRadius: 0,
               px: 2.2,
               fontWeight: 700,
               whiteSpace: 'nowrap',
             }}
           >
-            ADMISSIONS OPEN Click Here
+            Apply Now
           </Button>
           <IconButton
             onClick={toggleDarkMode}
