@@ -51,22 +51,15 @@ const Header = ({ onInquiryClick }: HeaderProps) => {
   const whatsappHref = 'https://wa.me/918212415333';
 
   return (
-    <AppBar position="sticky" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
+    <AppBar position="sticky" elevation={0} sx={{ backdropFilter: 'blur(6px)' }}>
       <Toolbar
         variant="dense"
         sx={{
           justifyContent: 'space-between',
-<<<<<<< HEAD
-          bgcolor: '#071f3d',
-          color: 'common.white',
-          minHeight: '32px',
-          px: { xs: 1.5, md: 4 },
-=======
           bgcolor: 'primary.dark',
           minHeight: '42px',
           px: { xs: 1, md: 2 },
           flexWrap: 'wrap',
->>>>>>> origin/main
         }}
       >
         <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
@@ -104,9 +97,8 @@ const Header = ({ onInquiryClick }: HeaderProps) => {
           gap: 2,
           alignItems: 'center',
           justifyContent: 'space-between',
-          minHeight: { xs: 76, md: 96 },
-          py: 1,
-          px: { xs: 1.5, md: 4 },
+          py: 0.75,
+          px: { xs: 1.5, md: 2.5 },
           bgcolor: 'background.paper',
           color: 'text.primary',
           borderBottom: '1px solid',
@@ -120,7 +112,7 @@ const Header = ({ onInquiryClick }: HeaderProps) => {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            gap: 1.2,
+            gap: 1.5,
             textDecoration: 'none',
             color: 'inherit',
             minWidth: 0,
@@ -131,13 +123,13 @@ const Header = ({ onInquiryClick }: HeaderProps) => {
             component="img"
             src="/mdes-assets/logo.png"
             alt="MDES Logo"
-            sx={{ height: { xs: 50, md: 68 }, width: 'auto', flexShrink: 0 }}
+            sx={{ height: { xs: 46, md: 58 }, width: 'auto', flexShrink: 0 }}
           />
         </Box>
 
         <Stack
           direction="row"
-          spacing={{ xs: 0.5, md: .5 }}
+          spacing={{ xs: 0.5, md: 1.5 }}
           sx={{
             alignItems: 'center',
             flexWrap: 'wrap',
@@ -152,13 +144,8 @@ const Header = ({ onInquiryClick }: HeaderProps) => {
                 key={link.label}
                 component={RouterLink}
                 to={link.to}
-                color="inherit"
-                sx={{
-                  fontWeight: 700,
-                  px: 1.15,
-                  minWidth: 'auto',
-                  color: isActiveLink(location.pathname, link.to) ? 'secondary.main' : 'inherit',
-                }}
+                color={isActiveLink(location.pathname, link.to) ? 'secondary' : 'inherit'}
+                sx={{ fontWeight: 700, px: 1.2, minWidth: 'auto' }}
               >
                 {link.label}
               </Button>
@@ -182,15 +169,12 @@ const Header = ({ onInquiryClick }: HeaderProps) => {
           <Button
             variant="contained"
             color="secondary"
-            component={RouterLink}
-            to="/admissions"
+            component="a"
+            href={MDES_SITE_INFO.admissionsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             sx={{
-<<<<<<< HEAD
-              display: { xs: 'none', md: 'inline-flex' },
-              borderRadius: 0,
-=======
               borderRadius: 999,
->>>>>>> origin/main
               px: 2.2,
               fontWeight: 700,
               whiteSpace: 'nowrap',
